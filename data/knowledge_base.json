@@ -1,0 +1,66 @@
+[
+  {
+    "title": "Artificial Intelligence Overview",
+    "content": "Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to the natural intelligence displayed by animals including humans. AI research has been defined as the field of study of intelligent agents, which refers to any system that perceives its environment and takes actions that maximize its chance of achieving its goals. The term 'artificial intelligence' had previously been used to describe machines that mimic and display human cognitive skills associated with the human mind, such as learning and problem-solving. This definition has since been rejected by major AI researchers who now describe AI in terms of rationality and acting rationally, which does not limit how intelligence can be articulated.",
+    "category": "technology",
+    "author": "AI Research Team"
+  },
+  {
+    "title": "Machine Learning Fundamentals",
+    "content": "Machine learning (ML) is a subset of artificial intelligence (AI) and computer science which focuses on the use of data and algorithms to imitate the way that humans learn, gradually improving its accuracy. Machine learning is an important component of the growing field of data science. Through the use of statistical methods, algorithms are trained to make classifications or predictions, and to uncover key insights in data mining projects. These insights subsequently drive decision making within applications and businesses, ideally impacting key growth metrics. Supervised learning, unsupervised learning, and reinforcement learning are the three main categories of machine learning.",
+    "category": "technology",
+    "author": "ML Team"
+  },
+  {
+    "title": "Natural Language Processing",
+    "content": "Natural language processing (NLP) is a subfield of linguistics, computer science, and artificial intelligence concerned with the interactions between computers and human language, in particular how to program computers to process and analyze large amounts of natural language data. The goal is a computer capable of understanding the contents of documents, including the contextual nuances of the language within them. The technology can then accurately extract information and insights contained in the documents, as well as categorize and organize the documents themselves. Challenges in natural language processing frequently involve speech recognition, natural language understanding, and natural-language generation.",
+    "category": "technology",
+    "author": "NLP Team"
+  },
+  {
+    "title": "Vector Databases Explained",
+    "content": "A vector database is a type of database that stores data as high-dimensional vectors, which are mathematical representations of features or attributes. Each vector has a certain number of dimensions, which can range from tens to thousands, depending on the complexity of the data. Vector databases are specifically designed for fast retrieval of vectors based on similarity rather than exact matches, making them ideal for AI and machine learning applications. They enable semantic search, recommendation systems, anomaly detection, and other AI-powered features. The core operation in a vector database is the approximate nearest neighbor (ANN) search, which efficiently finds vectors most similar to a query vector.",
+    "category": "technology",
+    "author": "Database Team"
+  },
+  {
+    "title": "Deep Learning and Neural Networks",
+    "content": "Deep learning is part of a broader family of machine learning methods based on artificial neural networks with representation learning. Learning can be supervised, semi-supervised or unsupervised. Deep-learning architectures such as deep neural networks, recurrent neural networks, convolutional neural networks, transformers and more have been applied to fields including computer vision, speech recognition, natural language processing, machine translation, bioinformatics and drug design, among many other tasks. Artificial neural networks were inspired by information processing and distributed communication nodes in biological systems. The 'deep' in deep learning refers to the use of multiple layers in the network.",
+    "category": "technology",
+    "author": "DL Research Team"
+  },
+  {
+    "title": "Retrieval-Augmented Generation (RAG)",
+    "content": "Retrieval-Augmented Generation (RAG) is an AI framework for retrieving facts from an external knowledge base to ground large language models (LLMs) on the most accurate, up-to-date information and to give users insight into LLMs' generative process. RAG combines the benefits of retrieval-based models and generative models. The retrieval component fetches relevant information from a knowledge base, while the generation component uses this information to produce coherent and contextually accurate responses. RAG systems are particularly useful for question answering, document summarization, and conversational AI applications where accuracy and factual grounding are critical.",
+    "category": "AI",
+    "author": "RAG Team"
+  },
+  {
+    "title": "Semantic Search Technology",
+    "content": "Semantic search is a search technique that tries to improve search accuracy by understanding the intent and contextual meaning of the search query, rather than simply matching keywords. Semantic search systems use natural language processing and machine learning to understand the meaning behind queries and documents. Unlike traditional keyword search, semantic search considers the relationships between words and concepts, enabling it to return more relevant results even when exact keywords don't match. Modern semantic search systems use dense vector representations (embeddings) to capture semantic meaning, enabling approximate nearest neighbor searches across millions of documents in milliseconds.",
+    "category": "search",
+    "author": "Search Team"
+  },
+  {
+    "title": "Transformer Architecture",
+    "content": "The Transformer is a deep learning model introduced in 2017, used primarily in the field of natural language processing (NLP) and increasingly in computer vision. It was developed by researchers at Google Brain. The Transformer architecture relies entirely on the attention mechanism, which is used to draw global dependencies between input and output. Unlike recurrent neural networks, Transformers process the entire input sequence at once rather than one token at a time. This allows for much greater parallelization during training. The self-attention mechanism allows the model to weigh the importance of different parts of the input when producing an output. BERT, GPT, and T5 are all based on the Transformer architecture.",
+    "category": "technology",
+    "author": "Architecture Team"
+  },
+  {
+    "title": "Embeddings and Representation Learning",
+    "content": "In machine learning, an embedding is a way of representing data as points in n-dimensional space so that similar data points cluster together. Embeddings capture the semantic and syntactic properties of data in a dense vector format. Word embeddings like Word2Vec and GloVe represent words as dense vectors where semantically similar words are closer together in the vector space. Sentence embeddings extend this concept to encode the meaning of entire sentences or paragraphs. Modern embedding models like Sentence-BERT produce embeddings that can be used for semantic similarity, clustering, information retrieval, and as features for downstream machine learning tasks.",
+    "category": "AI",
+    "author": "Embeddings Team"
+  },
+  {
+    "title": "Python Programming Language",
+    "content": "Python is a high-level, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation. Python is dynamically typed and garbage-collected. It supports multiple programming paradigms, including structured (particularly procedural), object-oriented and functional programming. It is often described as a batteries included language due to its comprehensive standard library. Guido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language. Python 3.0 was released in 2008. Python consistently ranks as one of the most popular programming languages and is widely used in data science, machine learning, and web development.",
+    "category": "programming",
+    "author": "Python Foundation"
+  },
+  {
+    "title": "How Neural Networks Work",
+    "content": "Neural networks are computing systems inspired by the human brain. They consist of layers of interconnected nodes called neurons. An input layer receives data, hidden layers process it through weighted connections, and an output layer produces results. Each connection has a weight adjusted during training using backpropagation. The network learns by minimizing errors using gradient descent. Activation functions like ReLU or sigmoid introduce non-linearity, allowing the network to learn complex patterns."
+  }
+]
