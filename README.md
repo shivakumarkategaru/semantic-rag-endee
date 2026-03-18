@@ -10,15 +10,6 @@
 
 ```
 
-Press **Ctrl+S** then push:
-```
-
-git add README.md
-git commit -m "Update README with local deployment note"
-git push
-
----
-
 ## 📋 Table of Contents
 
 - [Project Overview](#project-overview)
@@ -61,82 +52,88 @@ All components run **100% locally and free** — Groq API has a generous free ti
 ### 📥 Data Ingestion Phase
 
 ```
+
 Documents (.json / .txt / .csv)
-        │
-        ▼
+│
+▼
 ┌───────────────────────┐
-│  NLP Preprocessing    │  ← TextCleaner (normalize, clean)
-│  src/data_processing/ │
+│ NLP Preprocessing │ ← TextCleaner (normalize, clean)
+│ src/data_processing/ │
 └──────────┬────────────┘
-           │
-           ▼
+│
+▼
 ┌───────────────────────┐
-│  Chunking             │  ← TextChunker (sentence-aware sliding window)
-│  Split into chunks    │  ← Each chunk ~200-300 tokens with overlap
+│ Chunking │ ← TextChunker (sentence-aware sliding window)
+│ Split into chunks │ ← Each chunk ~200-300 tokens with overlap
 └──────────┬────────────┘
-           │
-           ▼
+│
+▼
 ┌───────────────────────┐
-│  Embedding            │  ← all-MiniLM-L6-v2 → 384-dim vectors
-│  src/embeddings/      │
+│ Embedding │ ← all-MiniLM-L6-v2 → 384-dim vectors
+│ src/embeddings/ │
 └──────────┬────────────┘
-           │
-           ▼
+│
+▼
 ┌───────────────────────┐
-│  Store in Endee       │  ← index.upsert(vectors + metadata)
-│  src/database/        │  ← HNSW index, cosine similarity
+│ Store in Endee │ ← index.upsert(vectors + metadata)
+│ src/database/ │ ← HNSW index, cosine similarity
 └───────────────────────┘
+
 ```
 
 ### 🔍 Query Phase
 
 ```
+
 User Query
-        │
-        ▼
+│
+▼
 ┌───────────────────────┐
-│  NLP Preprocessing    │  ← Clean and normalize query
+│ NLP Preprocessing │ ← Clean and normalize query
 └──────────┬────────────┘
-           │
-           ▼
+│
+▼
 ┌───────────────────────┐
-│  Embedding            │  ← Convert query → 384-dim vector
-│  all-MiniLM-L6-v2    │
+│ Embedding │ ← Convert query → 384-dim vector
+│ all-MiniLM-L6-v2 │
 └──────────┬────────────┘
-           │
-           ▼
+│
+▼
 ┌───────────────────────┐
-│  Endee Search         │  ← HNSW ANN search
-│  top_k=3, filters     │  ← Metadata filtering supported
+│ Endee Search │ ← HNSW ANN search
+│ top_k=3, filters │ ← Metadata filtering supported
 └──────────┬────────────┘
-           │
-           ▼
+│
+▼
 ┌───────────────────────┐
-│  Retrieve Top Chunks  │  ← Top 3 most relevant chunks
-│  + similarity scores  │  ← Filtered by min_score threshold
+│ Retrieve Top Chunks │ ← Top 3 most relevant chunks
+│ + similarity scores │ ← Filtered by min_score threshold
 └──────────┬────────────┘
-           │
-           ▼
+│
+▼
 ┌───────────────────────┐
-│  Context Injection    │  ← Retrieved chunks added to prompt
-│  Prompt Engineering   │  ← "Answer using this context: [chunks]"
+│ Context Injection │ ← Retrieved chunks added to prompt
+│ Prompt Engineering │ ← "Answer using this context: [chunks]"
 └──────────┬────────────┘
-           │
-           ▼
+│
+▼
 ┌───────────────────────┐
-│  Groq LLM             │  ← Llama 3.1 8B Instant (FREE)
-│  groq_generator.py    │  ← Context + Question → Answer
+│ Groq LLM │ ← Llama 3.1 8B Instant (FREE)
+│ groq_generator.py │ ← Context + Question → Answer
 └──────────┬────────────┘
-           │
-           ▼
-     Final Answer
-  { answer, sources, scores }
+│
+▼
+Final Answer
+{ answer, sources, scores }
+
 ```
 
 ### 🔥 Simplified View
 
 ```
+
 Query → Embed → Endee Search (top_k=3) → Add Context → Groq LLM → Answer
+
 ```
 
 ---
@@ -144,67 +141,69 @@ Query → Embed → Endee Search (top_k=3) → Add Context → Groq LLM → Answ
 ## Architecture & System Design
 
 ```
+
 ┌─────────────────────────────────────────────────────────────────┐
-│                        INGESTION PIPELINE                       │
-│                                                                 │
-│  Raw Text / File                                                │
-│       │                                                         │
-│       ▼                                                         │
-│  ┌─────────────┐    clean + chunk    ┌──────────────────────┐  │
-│  │  Document   │ ─────────────────► │  DocumentProcessor   │  │
-│  │  Sources    │                    │  (NLP preprocessing) │  │
-│  └─────────────┘                    └──────────┬───────────┘  │
-│                                                │ List[Chunk]    │
-│                                                ▼               │
-│                                     ┌──────────────────────┐  │
-│                                     │  EmbeddingEncoder    │  │
-│                                     │  all-MiniLM-L6-v2    │  │
-│                                     │  384-dim vectors      │  │
-│                                     └──────────┬───────────┘  │
-│                                                │ List[vector]   │
-│                                                ▼               │
-│                                     ┌──────────────────────┐  │
-│                                     │     VectorStore      │  │
-│                                     │  (Endee Python SDK)  │  │
-│                                     │  index.upsert(...)   │  │
-│                                     └──────────┬───────────┘  │
-│                                                ▼               │
-│                                     ┌──────────────────────┐  │
-│                                     │   Endee Server       │  │
-│                                     │   (Docker / HNSW)    │  │
-│                                     └──────────────────────┘  │
+│ INGESTION PIPELINE │
+│ │
+│ Raw Text / File │
+│ │ │
+│ ▼ │
+│ ┌─────────────┐ clean + chunk ┌──────────────────────┐ │
+│ │ Document │ ─────────────────► │ DocumentProcessor │ │
+│ │ Sources │ │ (NLP preprocessing) │ │
+│ └─────────────┘ └──────────┬───────────┘ │
+│ │ List[Chunk] │
+│ ▼ │
+│ ┌──────────────────────┐ │
+│ │ EmbeddingEncoder │ │
+│ │ all-MiniLM-L6-v2 │ │
+│ │ 384-dim vectors │ │
+│ └──────────┬───────────┘ │
+│ │ List[vector] │
+│ ▼ │
+│ ┌──────────────────────┐ │
+│ │ VectorStore │ │
+│ │ (Endee Python SDK) │ │
+│ │ index.upsert(...) │ │
+│ └──────────┬───────────┘ │
+│ ▼ │
+│ ┌──────────────────────┐ │
+│ │ Endee Server │ │
+│ │ (Docker / HNSW) │ │
+│ └──────────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────┐
-│                         QUERY PIPELINE                          │
-│                                                                 │
-│  User Question                                                  │
-│       │                                                         │
-│       ▼                                                         │
-│  ┌──────────────┐  encode   ┌──────────────────────────────┐  │
-│  │  RAGEngine   │ ────────► │     EmbeddingEncoder         │  │
-│  │  (query)     │           │     query vector [384-dim]   │  │
-│  └──────┬───────┘           └──────────────┬───────────────┘  │
-│         │                                  │                   │
-│         │      ANN search (top_k=3)         ▼                   │
-│         │  ◄─────────────────  ┌──────────────────────────┐  │
-│         │    top-k chunks      │    Endee HNSW Index      │  │
-│         │    + scores          │    cosine similarity      │  │
-│         │                      └──────────────────────────┘  │
-│         ▼                                                       │
-│  ┌──────────────┐                                              │
-│  │Context Inject│ ── chunks added to prompt                    │
-│  │Prompt Eng.   │ ── "Answer using context: [chunk1][chunk2]"  │
-│  └──────┬───────┘                                              │
-│         ▼                                                       │
-│  ┌──────────────┐                                              │
-│  │  Groq LLM   │ ── Llama 3.1 8B Instant (FREE)               │
-│  │  (Answer)   │                                               │
-│  └──────┬───────┘                                              │
-│         ▼                                                       │
-│    RAGResponse                                                  │
-│    { answer, sources, scores }                                  │
+│ QUERY PIPELINE │
+│ │
+│ User Question │
+│ │ │
+│ ▼ │
+│ ┌──────────────┐ encode ┌──────────────────────────────┐ │
+│ │ RAGEngine │ ────────► │ EmbeddingEncoder │ │
+│ │ (query) │ │ query vector [384-dim] │ │
+│ └──────┬───────┘ └──────────────┬───────────────┘ │
+│ │ │ │
+│ │ ANN search (top_k=3) ▼ │
+│ │ ◄───────────────── ┌──────────────────────────┐ │
+│ │ top-k chunks │ Endee HNSW Index │ │
+│ │ + scores │ cosine similarity │ │
+│ │ └──────────────────────────┘ │
+│ ▼ │
+│ ┌──────────────┐ │
+│ │Context Inject│ ── chunks added to prompt │
+│ │Prompt Eng. │ ── "Answer using context: [chunk1][chunk2]" │
+│ └──────┬───────┘ │
+│ ▼ │
+│ ┌──────────────┐ │
+│ │ Groq LLM │ ── Llama 3.1 8B Instant (FREE) │
+│ │ (Answer) │ │
+│ └──────┬───────┘ │
+│ ▼ │
+│ RAGResponse │
+│ { answer, sources, scores } │
 └─────────────────────────────────────────────────────────────────┘
+
 ```
 
 ---
@@ -212,58 +211,60 @@ Query → Embed → Endee Search (top_k=3) → Add Context → Groq LLM → Answ
 ## Project Structure
 
 ```
+
 semantic-rag-endee/
 │
-├── main.py                      # Entry point — demo + interactive loop
-├── run.py                       # Quick start with Groq AI + chat history
-├── api.py                       # Flask REST API for React frontend
-├── docker-compose.yml           # Endee server via Docker
-├── requirements.txt             # Python dependencies
-├── setup.py                     # Package setup
-├── pytest.ini                   # Test configuration
-├── .env                         # Environment variables (GROQ_API_KEY)
-├── .env.example                 # Environment variable template
+├── main.py # Entry point — demo + interactive loop
+├── run.py # Quick start with Groq AI + chat history
+├── api.py # Flask REST API for React frontend
+├── docker-compose.yml # Endee server via Docker
+├── requirements.txt # Python dependencies
+├── setup.py # Package setup
+├── pytest.ini # Test configuration
+├── .env # Environment variables (GROQ_API_KEY)
+├── .env.example # Environment variable template
 │
 ├── src/
-│   ├── config.py                # All settings in one place
-│   ├── pipeline.py              # Top-level RAGPipeline orchestrator
-│   │
-│   ├── data_processing/
-│   │   ├── __init__.py
-│   │   └── processor.py         # TextCleaner, TextChunker, DocumentProcessor
-│   │
-│   ├── embeddings/
-│   │   ├── __init__.py
-│   │   └── encoder.py           # EmbeddingEncoder (sentence-transformers)
-│   │
-│   ├── database/
-│   │   ├── __init__.py
-│   │   └── vector_store.py      # VectorStore — Endee SDK wrapper
-│   │
-│   └── query_handler/
-│       ├── __init__.py
-│       ├── rag_engine.py        # RAGEngine + RAGResponse
-│       ├── groq_generator.py    # Groq + Llama 3.1 (FREE AI answers)
-│       ├── gemini_generator.py  # Google Gemini integration
-│       └── openai_generator.py  # OpenAI integration
+│ ├── config.py # All settings in one place
+│ ├── pipeline.py # Top-level RAGPipeline orchestrator
+│ │
+│ ├── data_processing/
+│ │ ├── **init**.py
+│ │ └── processor.py # TextCleaner, TextChunker, DocumentProcessor
+│ │
+│ ├── embeddings/
+│ │ ├── **init**.py
+│ │ └── encoder.py # EmbeddingEncoder (sentence-transformers)
+│ │
+│ ├── database/
+│ │ ├── **init**.py
+│ │ └── vector_store.py # VectorStore — Endee SDK wrapper
+│ │
+│ └── query_handler/
+│ ├── **init**.py
+│ ├── rag_engine.py # RAGEngine + RAGResponse
+│ ├── groq_generator.py # Groq + Llama 3.1 (FREE AI answers)
+│ ├── gemini_generator.py # Google Gemini integration
+│ └── openai_generator.py # OpenAI integration
 │
 ├── data/
-│   └── knowledge_base.json      # Sample AI/tech knowledge base
+│ └── knowledge_base.json # Sample AI/tech knowledge base
 │
-├── frontend/                    # Professional React UI
-│   ├── src/
-│   │   └── App.js               # Main React component
-│   └── package.json
+├── frontend/ # Professional React UI
+│ ├── src/
+│ │ └── App.js # Main React component
+│ └── package.json
 │
 ├── scripts/
-│   ├── ingest.py                # Standalone ingestion script
-│   └── query.py                 # Standalone query script
+│ ├── ingest.py # Standalone ingestion script
+│ └── query.py # Standalone query script
 │
 └── tests/
-    ├── test_data_processing.py  # Unit tests for processor
-    ├── test_embeddings.py       # Unit tests for encoder
-    └── test_pipeline.py         # Integration tests (mock Endee)
-```
+├── test_data_processing.py # Unit tests for processor
+├── test_embeddings.py # Unit tests for encoder
+└── test_pipeline.py # Integration tests (mock Endee)
+
+````
 
 ---
 
@@ -294,7 +295,7 @@ docker ps
 # Verify API is live
 curl http://localhost:8080/api/v1/index/list
 # → {"indexes":[]}
-```
+````
 
 To stop:
 
