@@ -4,6 +4,21 @@
 
 ---
 
+> A production-grade **Retrieval-Augmented Generation (RAG)** system built in Python, using [Endee](https://github.com/endee-io/endee) as the high-performance vector database backend — powered by **Groq + Llama 3.1** for free, fast AI-generated answers, with a professional **React frontend**.
+
+> 🚀 **Live Demo**: Run locally following the setup instructions below. Endee vector database runs via Docker and requires local deployment.
+
+```
+
+Press **Ctrl+S** then push:
+```
+
+git add README.md
+git commit -m "Update README with local deployment note"
+git push
+
+---
+
 ## 📋 Table of Contents
 
 - [Project Overview](#project-overview)
@@ -24,18 +39,18 @@
 
 This project implements a complete **Semantic Search + RAG pipeline** with the following capabilities:
 
-| Feature | Detail |
-|---|---|
-| **Embeddings** | `all-MiniLM-L6-v2` via `sentence-transformers` (384-dim, open-source) |
-| **Vector DB** | [Endee](https://endee.io) — high-performance, HNSW-indexed, runs on Docker |
-| **Chunking** | Sentence-aware sliding window chunking with overlap |
-| **Similarity Search** | Cosine similarity search with top-k retrieval and metadata filters |
-| **Context Injection** | Retrieved chunks passed as context to LLM for grounded answers |
-| **Answer Generation** | **Groq + Llama 3.1** (free) with full prompt engineering |
-| **NLP Preprocessing** | Unicode normalization, URL stripping, sentence-aware chunking |
-| **Input Formats** | Plain text strings, `.txt`, `.json`, `.csv` files |
-| **Frontend** | Professional React UI with chat history and source display |
-| **Architecture** | Fully modular — each concern lives in its own package |
+| Feature               | Detail                                                                     |
+| --------------------- | -------------------------------------------------------------------------- |
+| **Embeddings**        | `all-MiniLM-L6-v2` via `sentence-transformers` (384-dim, open-source)      |
+| **Vector DB**         | [Endee](https://endee.io) — high-performance, HNSW-indexed, runs on Docker |
+| **Chunking**          | Sentence-aware sliding window chunking with overlap                        |
+| **Similarity Search** | Cosine similarity search with top-k retrieval and metadata filters         |
+| **Context Injection** | Retrieved chunks passed as context to LLM for grounded answers             |
+| **Answer Generation** | **Groq + Llama 3.1** (free) with full prompt engineering                   |
+| **NLP Preprocessing** | Unicode normalization, URL stripping, sentence-aware chunking              |
+| **Input Formats**     | Plain text strings, `.txt`, `.json`, `.csv` files                          |
+| **Frontend**          | Professional React UI with chat history and source display                 |
+| **Architecture**      | Fully modular — each concern lives in its own package                      |
 
 All components run **100% locally and free** — Groq API has a generous free tier with no credit card required.
 
@@ -378,6 +393,7 @@ for r in results:
 ```
 
 **Sample output:**
+
 ```
 ──────────────────────────────────────────────────────────────────────
   QUESTION : How do neural networks work?
@@ -398,6 +414,7 @@ for r in results:
 ## Frontend
 
 Professional React UI featuring:
+
 - 💬 Real-time chat interface with typing indicator
 - 📜 Chat history sidebar
 - 📄 Retrieved sources with similarity score bars
@@ -407,12 +424,14 @@ Professional React UI featuring:
 ### Run the Frontend
 
 **Terminal 1 — Start Flask API:**
+
 ```bash
 python api.py
 # → Running on http://127.0.0.1:5000
 ```
 
 **Terminal 2 — Start React:**
+
 ```bash
 cd frontend
 npm install
@@ -424,14 +443,14 @@ npm start
 
 ## Configuration
 
-| Variable | Default | Description |
-|---|---|---|
-| `ENDEE_HOST` | `http://localhost:8080` | Endee server URL |
-| `ENDEE_INDEX_NAME` | `rag_knowledge_base` | Endee index name |
-| `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | HuggingFace model ID |
-| `GROQ_API_KEY` | `` | Groq API key (free at console.groq.com) |
-| `GROQ_MODEL` | `llama-3.1-8b-instant` | Groq Llama model |
-| `LOG_LEVEL` | `INFO` | Logging verbosity |
+| Variable           | Default                 | Description                             |
+| ------------------ | ----------------------- | --------------------------------------- |
+| `ENDEE_HOST`       | `http://localhost:8080` | Endee server URL                        |
+| `ENDEE_INDEX_NAME` | `rag_knowledge_base`    | Endee index name                        |
+| `EMBEDDING_MODEL`  | `all-MiniLM-L6-v2`      | HuggingFace model ID                    |
+| `GROQ_API_KEY`     | ``                      | Groq API key (free at console.groq.com) |
+| `GROQ_MODEL`       | `llama-3.1-8b-instant`  | Groq Llama model                        |
+| `LOG_LEVEL`        | `INFO`                  | Logging verbosity                       |
 
 ---
 
@@ -451,16 +470,16 @@ pytest tests/test_pipeline.py -v
 
 ## Module Reference
 
-| Module | Key Class | Responsibility |
-|---|---|---|
-| `src.data_processing.processor` | `DocumentProcessor` | Clean, chunk, structure raw text into `Document` objects |
-| `src.embeddings.encoder` | `EmbeddingEncoder` | Convert text to 384-dim L2-normalized embeddings |
-| `src.database.vector_store` | `VectorStore` | Endee SDK — index management, upsert, top-k search with filters |
-| `src.query_handler.rag_engine` | `RAGEngine` | Full RAG — embed query → retrieve → inject context → answer |
-| `src.query_handler.groq_generator` | `GroqGenerator` | Context injection + prompt engineering + Groq LLM answers |
-| `src.pipeline` | `RAGPipeline` | High-level orchestrator wiring all modules together |
-| `src.config` | — | Central configuration with env-var overrides |
-| `api.py` | Flask App | REST API connecting Python backend to React frontend |
+| Module                             | Key Class           | Responsibility                                                  |
+| ---------------------------------- | ------------------- | --------------------------------------------------------------- |
+| `src.data_processing.processor`    | `DocumentProcessor` | Clean, chunk, structure raw text into `Document` objects        |
+| `src.embeddings.encoder`           | `EmbeddingEncoder`  | Convert text to 384-dim L2-normalized embeddings                |
+| `src.database.vector_store`        | `VectorStore`       | Endee SDK — index management, upsert, top-k search with filters |
+| `src.query_handler.rag_engine`     | `RAGEngine`         | Full RAG — embed query → retrieve → inject context → answer     |
+| `src.query_handler.groq_generator` | `GroqGenerator`     | Context injection + prompt engineering + Groq LLM answers       |
+| `src.pipeline`                     | `RAGPipeline`       | High-level orchestrator wiring all modules together             |
+| `src.config`                       | —                   | Central configuration with env-var overrides                    |
+| `api.py`                           | Flask App           | REST API connecting Python backend to React frontend            |
 
 ---
 
@@ -470,4 +489,4 @@ MIT License — free to use, modify, and distribute.
 
 ---
 
-*Built with [Endee](https://endee.io) · [sentence-transformers](https://www.sbert.net) · [Groq](https://groq.com) · [React](https://react.dev) · Python 3.9+*
+_Built with [Endee](https://endee.io) · [sentence-transformers](https://www.sbert.net) · [Groq](https://groq.com) · [React](https://react.dev) · Python 3.9+_
